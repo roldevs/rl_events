@@ -1,0 +1,8 @@
+
+#create_event input.error, select.error , textarea.error  {
+  border-color: #b94a48;
+}
+#create_event .required:after {
+  content:" *";
+  color: red;
+}

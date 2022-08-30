@@ -2,27 +2,25 @@
 
 defined('ABSPATH') or die( "Bye bye" );
 
-class RLEvents_GameDataGameOrganizers {
-  protected $db;
-  protected $postId;
-
-  public function __construct($db, $postId) {
-    $this->db = $db;
-    $this->postId = $postId;
+class RLEvents_GameDataGameOrganizers extends RLEvents_GameDataQueryCache {
+  public function data($postId) {
+    return array_values(array_map(array($this, 'organizerData'), $this->findById($postId, 'ID')));
   }
 
-  public function data() {
-    return $this->getResults();
+  // Protected
+
+  protected function organizerData($organizer) {
+    return array(
+      'id' => $organizer->organizer_id,
+      'name' => $organizer->organizer
+    );
   }
 
-  // Private
-
-  private function getResults() {
-    return $this->db->getSqlResults($this->getStatement());
-  }
-
-  private function getStatement () {
-    return "SELECT pm.meta_value as organizer_id,wp_organizers.post_title organizer
+  protected function getStatement ($postIds) {
+    return "SELECT
+        wp_events.ID,
+        pm.meta_value as organizer_id,
+        wp_organizers.post_title as organizer
       FROM wp_posts wp_events,
         wp_posts wp_organizers,
         wp_postmeta pm
@@ -31,7 +29,7 @@ class RLEvents_GameDataGameOrganizers {
         AND wp_events.post_type = 'tribe_events'
         AND wp_organizers.post_type = 'tribe_organizer'
         AND pm.meta_value = wp_organizers.ID
-        AND wp_events.ID = $this->postId;
+        AND wp_events.ID IN (".join(',', $postIds).")
     ;";
   }
 }

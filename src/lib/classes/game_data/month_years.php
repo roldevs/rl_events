@@ -3,10 +3,10 @@
 defined('ABSPATH') or die( "Bye bye" );
 
 class RLEvents_GameDataMonthYears {
-  protected $db;
+  protected $query;
 
   public function __construct($db) {
-      $this->db = $db;
+    $this->query = new RLEvents_Query($db, $this->getStatement());
   }
 
   public function data() {
@@ -28,7 +28,7 @@ class RLEvents_GameDataMonthYears {
   }
 
   private function getResults() {
-    return $this->db->getSqlResults($this->getStatement());
+    return $this->query->run();
   }
 
   private function getStatement () {

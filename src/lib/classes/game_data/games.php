@@ -10,6 +10,7 @@ class RLEvents_GameDataGames {
   protected $capacityMemoizedObject;
   protected $attendeesMemoizedObject;
   protected $organizersMemoizedObject;
+  protected $endDateMemoizedObject;
 
   public function __construct($db, $startDate, $endDate) {
     $this->db = $db;
@@ -19,6 +20,7 @@ class RLEvents_GameDataGames {
     $this->capacityMemoizedObject = new RLEvents_Memoizer();
     $this->attendeesMemoizedObject = new RLEvents_Memoizer();
     $this->organizersMemoizedObject = new RLEvents_Memoizer();
+    $this->endDateMemoizedObject = new RLEvents_Memoizer();
   }
 
   public function data() {
@@ -48,6 +50,12 @@ class RLEvents_GameDataGames {
   private function gameOrganizerObject() {
     return $this->organizersMemoizedObject->memoize(function() {
       return new RLEvents_GameDataGameOrganizers($this->db, $this->getResultPostIds());
+    });
+  }
+
+  private function gameEndDateObject() {
+    return $this->endDateMemoizedObject->memoize(function() {
+      return new RLEvents_GameDataGameEventDate($this->db, $this->getResultPostIds());
     });
   }
 
@@ -85,6 +93,7 @@ class RLEvents_GameDataGames {
     return array(
       'capacity' => $this->getCapacityObject()->data($record->ID),
       'date' => $record->start_date,
+      'end_date' => $this->gameEndDateObject()->data($record->ID),
       "title" => htmlspecialchars($record->post_title),
       "link" => get_permalink($record->ID),
       "gms" => $this->gameOrganizerObject()->data($record->ID)

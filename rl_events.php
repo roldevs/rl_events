@@ -31,6 +31,8 @@ include(plugin_dir_path(__FILE__).'/src/lib/classes/game_data/month_years.php');
 include(plugin_dir_path(__FILE__).'/src/lib/classes/game_data/month_dates.php');
 include(plugin_dir_path(__FILE__).'/src/lib/classes/game_data/query_cache.php');
 include(plugin_dir_path(__FILE__).'/src/lib/classes/game_data/games.php');
+include(plugin_dir_path(__FILE__).'/src/lib/classes/game_data/members.php');
 include(plugin_dir_path(__FILE__).'/src/lib/classes/game_data/game/capacity.php');
 include(plugin_dir_path(__FILE__).'/src/lib/classes/game_data/game/attendees.php');
+include(plugin_dir_path(__FILE__).'/src/lib/classes/game_data/game/end_date.php');
 include(plugin_dir_path(__FILE__).'/src/lib/classes/game_data/game/organizers.php');

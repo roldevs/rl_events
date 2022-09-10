@@ -12,6 +12,7 @@ $getFirstDay = $getMonthDatesObject->firstDay();
 $getLastDay = $getMonthDatesObject->lastDay();
 $getGamesObject = new RLEvents_GameDataGames(new RLEvents_DB(), $getFirstDay, $getLastDay);
 $data = array(
+  'members' => (new RLEvents_GameDataMembers())->data(),
   'first_day' => $getFirstDay,
   'last_day' => $getLastDay,
   'month_years' => $getMonthYearsObject->data(),

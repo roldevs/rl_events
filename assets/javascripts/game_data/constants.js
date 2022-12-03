@@ -1,4 +1,4 @@
-const VERSION = 'v3.1.6';
+const VERSION = 'v3.1.7';
 const DEFAULT_MAX_PLAYERS = 4;
 const MONTH_SELECTOR_LABEL = 'Elige el mes';
 const event = {

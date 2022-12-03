@@ -31,7 +31,8 @@ import {getEventListToShare} from "./share.js";
 
 function getAttendeeList({can_go}, max, members) {
 	const maxPlayers = parseInt(max) || DEFAULT_MAX_PLAYERS;
-	const emptyPlayers = maxPlayers - can_go.length;
+
+	const emptyPlayers = maxPlayers === -1 ? 0 : maxPlayers - can_go.length;
 	const emptySlots = new Array(emptyPlayers).fill(EMPTY_ATTENDEE);
 	const result = can_go.map(player => {
 		const discordStatus = checkDiscordID(player.name) ? 'event__attendee--bad-discord-id' : '';
@@ -73,7 +74,7 @@ function getEventsTemplate(games, members) {
 				<div class="event__gm">
 					<h4 class="event__gm-label">${getGMsLiteral(game.gms)}:</h4>
 					<ul class="event__gm-items">
-						${formatGMs(game.gms, 'event__gms-item')}
+						${formatGMs(game.gms, 'event__gms-item').join('')}
 					</ul>
 				</div>
 			</header>
@@ -90,8 +91,11 @@ function getEventsTemplate(games, members) {
 
 
 
-function getNavTemplate(data) {
-	const options = data.map(option => `<option value="${option.label}">${datesToHuman(option.label)}</option>`);
+function getNavTemplate(data, month) {
+	const options = data.map(option => {
+		const selectedStr = option === month ? 'selected' : '';
+		return `<option value="${option}" ${selectedStr}>${datesToHuman(option)}</option>`
+	});
 	return `<div class="game-data__nav js__game-data-nav">
 		<div class="game-data__nav-filter js__nav-filter-history">
 			<label for="filterHistory" class="game-data__nav-filter-label">${MONTH_SELECTOR_LABEL}:</label>
@@ -266,7 +270,7 @@ function getShareModalTemplate(data) {
 					</header>
 					<div class="modal__main js__modal-main">
 						<h3 class="modal__subtitle">Copiar textos para redes:</h3>
-						<ul class="modal__social">
+						<ul class="modal__social wp-exclude-emoji">
 							${getEventListToShare(data)}
 						</ul>					
 					</div>
@@ -333,7 +337,7 @@ ${isComplete ? '🔥 ¡Partida completa!' : '⭐ ¡Participa!'}
 
 
 function getShareBannerTemplate() {
-	return `<div class="banner js__banner">
+	return `<div class="banner wp-exclude-emoji js__banner">
 		<div class="banner__item js__banner-item"></div>
 	</div>`;
 }

@@ -86,6 +86,9 @@
 	/*background-color: #F9F4E7;*/
 	position: relative;
 }
+.wp-admin .game-data {
+	margin-right: calc(20/16*1rem);
+}
 
 .game-data__default-nav--hidden {
 	display: none;
@@ -548,7 +551,9 @@
 }
 
 .button,
+.wp-core-ui .button,
 .filter__field {
+	color: var(--color-text);
 	background-color: var(--color-white);
 	border: 1px solid var(--color-filter-border);
 	height: calc(30/16*1rem);
@@ -559,19 +564,22 @@
 }
 
 .button:not(:disabled):hover,
+.wp-core-ui .button:not(:disabled):hover,
 .filter__field:hover {
 	/*border-color: var(--color-link);*/
 	box-shadow: 0 2px 4px rgba(0,0,0,.13);
 }
 
 .button:not(:disabled):active,
+.wp-core-ui .button:not(:disabled):active,
 .filter__field:active {
 	/*border-color: var(--color-link);*/
 	background-color: #f4f5f6;
 	box-shadow: inset 0 2px 4px rgba(0,0,0,.13);
 }
 
-button:disabled {
+button:disabled,
+.wp-core-ui .button:disabled {
 	opacity: .5;
 }
 
@@ -674,7 +682,7 @@ button:disabled {
 	top: 0;
 	width: 100vw;
 	height: 1px;
-	z-index: 2;
+	z-index: 9990;
 	display: flex;
 	overflow-y: auto;
 	transition: opacity ease .3s;
@@ -837,7 +845,7 @@ button:disabled {
 	width: 100vw;
 	overflow: hidden;
 	height: 1px;
-	z-index: 3;
+	z-index: 9991;
 	background-color: rgba(134, 31, 19, 0);
 	transition: background-color ease .3s;
 }

@@ -12,7 +12,10 @@ import {anonData} from "./helpers.js";
 import {initSharer} from "./share.js";
 
 const gameData = document.querySelector('.js__game-data');
-const gameDataContainer = gameData.querySelector('.js__game-data-main')
+let gameDataContainer;
+if (gameData) {
+	gameDataContainer = gameData.querySelector('.js__game-data-main');
+}
 
 
 function createGames() {
@@ -21,19 +24,17 @@ function createGames() {
 }
 
 
-function createNavigation() {
-	const nav = [...document.querySelectorAll('.js__game-data-default-nav-link')]
-		.map(item => {
-			return {
-				link: item.href, label: item.innerText
-			}
-		});
-	const navTemplate = getNavTemplate(nav);
+function createNavigation(navData) {
+	const nav = Object.values(navData);
+	const currentLocation = new URL(location.href);
+	const currentMonth = currentLocation.searchParams.get('month_year') || nav[0];
+	const navTemplate = getNavTemplate(nav, currentMonth);
 	gameDataContainer.insertAdjacentHTML('beforeend', navTemplate);
 	const months = gameData.querySelector('.js__nav-filter-select');
 	months.addEventListener('change', event => {
 		const field = event.currentTarget;
-		location.href = `/wp-admin/admin.php?page=rl_events%2Fsrc%2Fgame_data%2Findex.php&month_year=${field.value}`;
+		currentLocation.searchParams.set('month_year', field.value);
+		location.href = currentLocation.toString();
 	});
 }
 
@@ -61,7 +62,7 @@ function createSharer() {
 
 function createUI(ver) {
 	console.log(`🎲🎲 Welcome to Game Data ${ver}`);
-	createNavigation();
+	createNavigation(game_data.month_years);
 	createGames();
 	createStats()
 	createProgressBar();

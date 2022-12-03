@@ -27,7 +27,9 @@ function activeFilter(field) {
 function showGamesFrom(gm) {
 	const games = document.querySelectorAll('.events__item');
 	games.forEach(game => {
-		if (game.querySelector('.event__gms-item-discord-id').innerText !== gm) {
+		const gameMasters = [...game.querySelectorAll('.event__gms-item-discord-id')]
+			.map(m => m.textContent);
+		if (!gameMasters.includes(gm)) {
 			game.classList.add('events__item--filtered');
 		} else {
 			game.classList.remove('events__item--filtered');

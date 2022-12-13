@@ -21,7 +21,7 @@ function getUniqueGM(games) {
 
 function getUniqueClubPlayers(data) {
 	const players = [...new Set(data.games.map(gameObj => gameObj.attendees.can_go.map(cg => cg.name)).flat())];
-	return players.filter(player => data.members.includes(player)).length;
+	return players.filter(player => data.members.includes(player.toLowerCase())).length;
 }
 
 
@@ -53,7 +53,7 @@ function getProgressData(data) {
 		total += parseInt(gameBlock.game.capacity);
 		players += gameBlock.attendees.can_go.length;
 		gameBlock.attendees.can_go.forEach(player => {
-			if (data.members.includes(player.name)) clubPlayers++;
+			if (data.members.includes(player.name.toLowerCase())) clubPlayers++;
 		});
 	}
 

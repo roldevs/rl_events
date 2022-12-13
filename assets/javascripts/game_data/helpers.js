@@ -123,7 +123,7 @@ function getDateStatus(strDate) {
 
 
 function checkMemberStatus(discord_id, members) {
-	 return members.includes(discord_id) ? 'event__attendee--is-member' : '';
+	 return members.includes(discord_id.toLowerCase()) ? 'event__attendee--is-member' : '';
 }
 
 

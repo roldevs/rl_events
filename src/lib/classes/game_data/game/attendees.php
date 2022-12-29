@@ -30,6 +30,7 @@ class RLEvents_GameDataGameAttendees extends RLEvents_GameDataQueryCache {
   }
 
   protected function getStatement($postIds) {
+    global $wpdb;
     return "SELECT
       pm_eventid.meta_value as ID,
       pm_status.meta_value as can_go,

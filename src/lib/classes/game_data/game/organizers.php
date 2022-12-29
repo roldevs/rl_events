@@ -17,6 +17,7 @@ class RLEvents_GameDataGameOrganizers extends RLEvents_GameDataQueryCache {
   }
 
   protected function getStatement ($postIds) {
+    global $wpdb;
     return "SELECT
         wp_events.ID,
         pm.meta_value as organizer_id,

@@ -15,6 +15,7 @@ class RLEvents_GameDataGameEventDate extends RLEvents_GameDataQueryCache {
   }
 
   protected function getStatement ($postIds) {
+    global $wpdb;
     return "SELECT
         wp_events.ID as ID,
         pm.meta_value as end_date

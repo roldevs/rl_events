@@ -66,6 +66,7 @@ class RLEvents_GameDataGames {
   }
 
   private function getStatement () {
+    global $wpdb;
     return "SELECT
         wp.ID,wp.post_title,pm.meta_value as start_date
       FROM

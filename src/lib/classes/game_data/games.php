@@ -69,7 +69,7 @@ class RLEvents_GameDataGames {
     return "SELECT
         wp.ID,wp.post_title,pm.meta_value as start_date
       FROM
-        wp_posts wp, wp_postmeta pm
+        {$wpdb->prefix}posts wp, {$wpdb->prefix}postmeta pm
       WHERE wp.ID = pm.post_id
         AND pm.meta_key='_EventStartDate'
         AND DATE(pm.meta_value) >= DATE('$this->startDate')

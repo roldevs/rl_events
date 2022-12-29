@@ -18,9 +18,9 @@ class RLEvents_GameDataGameEventDate extends RLEvents_GameDataQueryCache {
     return "SELECT
         wp_events.ID as ID,
         pm.meta_value as end_date
-      FROM wp_posts wp_events,
-        wp_posts wp_organizers,
-        wp_postmeta pm
+      FROM {$wpdb->prefix}posts wp_events,
+        {$wpdb->prefix}posts wp_organizers,
+        {$wpdb->prefix}postmeta pm
       WHERE wp_events.ID = pm.post_id
         AND pm.meta_key = '_EventEndDate'
         AND wp_events.post_type = 'tribe_events'

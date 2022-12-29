@@ -30,7 +30,7 @@ class RLEvents_GameDataPostDates {
   private function getStatement () {
     return "SELECT
         DATE_FORMAT(wp.post_date, '%%Y/%%m/%%d') as post_date
-      FROM wp_posts wp
+      FROM {$wpdb->prefix}posts wp
       WHERE wp.post_type = 'tribe_events'
         AND wp.post_status='publish'
       ORDER BY wp.post_date DESC

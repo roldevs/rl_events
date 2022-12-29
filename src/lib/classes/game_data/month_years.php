@@ -34,7 +34,7 @@ class RLEvents_GameDataMonthYears {
   private function getStatement () {
     return "SELECT
         DATE_FORMAT(pm.meta_value, '%Y-%m') as start_date
-      FROM wp_posts wp, wp_postmeta pm
+      FROM {$wpdb->prefix}posts wp, {$wpdb->prefix}postmeta pm
       WHERE wp.ID = pm.post_id
         AND pm.meta_key='_EventStartDate'
         AND post_type = 'tribe_events'

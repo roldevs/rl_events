@@ -28,6 +28,7 @@ class RLEvents_GameDataPostDates {
   }
 
   private function getStatement () {
+    global $wpdb;
     return "SELECT
         DATE_FORMAT(wp.post_date, '%%Y/%%m/%%d') as post_date
       FROM {$wpdb->prefix}posts wp

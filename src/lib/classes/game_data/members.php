@@ -19,6 +19,7 @@ class RLEvents_GameDataMembers {
       'divad#3865',
       'dlf#6807',
       'doctoralban#2753',
+      'DonJose#7816',
       'fa de a#3760',
       'floyd303#2646',
       'frantirado#4085',
@@ -56,6 +57,7 @@ class RLEvents_GameDataMembers {
       'steph#5314',
       'txi89#8098',
       'valero#1635',
+      'Wraith#4130',
       'xantra#7996',
       'youjin#4787'
     );

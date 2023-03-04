@@ -18,6 +18,7 @@ defined('ABSPATH') or die("Bye bye");
 define('RL_EVENTS_PATH', plugin_dir_path(__FILE__));
 
 include(plugin_dir_path(__FILE__).'/src/lib/defines.php');
+include(plugin_dir_path(__FILE__).'/src/lib/init.php');
 include(plugin_dir_path(__FILE__).'/src/lib/assets.php');
 include(plugin_dir_path(__FILE__).'/src/lib/menu.php');
 include(plugin_dir_path(__FILE__).'/src/lib/permissions.php');

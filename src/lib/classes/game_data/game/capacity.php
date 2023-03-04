@@ -12,6 +12,7 @@ class RLEvents_GameDataGameCapacity extends RLEvents_GameDataQueryCache {
   // Protected
 
   protected function getStatement ($postIds) {
+    global $wpdb;
     return "SELECT
       pm_event.meta_value,
       pm_capacity.meta_value as capacity

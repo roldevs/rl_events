@@ -32,6 +32,7 @@ class RLEvents_GameDataMonthYears {
   }
 
   private function getStatement () {
+    global $wpdb;
     return "SELECT
         DATE_FORMAT(pm.meta_value, '%Y-%m') as start_date
       FROM {$wpdb->prefix}posts wp, {$wpdb->prefix}postmeta pm

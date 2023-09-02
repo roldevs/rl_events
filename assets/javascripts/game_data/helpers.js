@@ -1,4 +1,4 @@
-import { MONTHS, gms, CANCELLED_GAME_STR, } from "./constants.js";
+import { MONTHS, gms } from "./constants.js";
 
 
 function anonData(condition) {
@@ -41,13 +41,6 @@ function getMonthName(strDate) {
 }
 
 
-function checkDiscordID(discordId) {
-	const USER_REGEX = /[.·0-9A-Za-zÀ-ÿ_\ \()\-]{3,32}#[0-9]{4}/;
-	if (discordId === CANCELLED_GAME_STR) return false;
-	return !USER_REGEX.test(discordId);
-}
-
-
 function getGameDate(strDate, strEndDate) {
 	const gameDate = new Date(formatStrDate(strDate));
 	const gameEndDate = new Date(formatStrDate(strEndDate));
@@ -75,32 +68,6 @@ function getGMsLiteral(list) {
 	return list.length === 1 ? gms.SINGULAR : gms.PLURAL;
 }
 
-
-function getTitleAndGameSystem(str) {
-	const DOUBLE_BRACKET_DIVIDER = ') (';
-	const SINGLE_BRACKET_DIVIDER = ' (';
-	const hasBracket = str.includes('(');
-
-	if (!hasBracket) return {
-		str,
-		title: str.replace(')', ''),
-		system: undefined
-	};
-
-	const hasDoubleBracket = str.includes(DOUBLE_BRACKET_DIVIDER);
-	const divider = hasDoubleBracket ? DOUBLE_BRACKET_DIVIDER : SINGLE_BRACKET_DIVIDER;
-
-	const title = str.split(divider)[0] + (hasDoubleBracket ? ')':'');
-	const system = str.split(title + ' ')[1].replace('(', '').replace(')', '');
-
-	return {
-		str,
-		title,
-		system
-	};
-}
-
-
 function getDateStatus(strDate) {
 	const DIFF_LIMIT = -3.5;
 	const gameDate = new Date(strDate.replaceAll('-','/'));
@@ -121,11 +88,13 @@ function getDateStatus(strDate) {
 	return isToday + dateStatus;
 }
 
-
-function checkMemberStatus(discord_id, members) {
-	 return members.includes(discord_id.toLowerCase()) ? 'event__attendee--is-member' : '';
+function checkMemberStatus(attendee) {
+	return isMember(attendee) ? 'event__attendee--is-member' : '';
 }
 
+function isMember(attendee) {
+	return attendee.member
+}
 
 function getTimeAlertStatus(strTime) {
 	const hours = strTime.split(':')[0];
@@ -133,15 +102,11 @@ function getTimeAlertStatus(strTime) {
 	return hours !== '22' ? 'event__date-time--alert' : '';
 }
 
-
-function getCancelledStatus(data) {
-	return !!data.can_go.filter(player => player.name.toLowerCase() === CANCELLED_GAME_STR.toLowerCase()).length;
+function getCancelledStatus(game) {
+	return game.cancelled;
 }
 
-
-
 export {
-	checkDiscordID,
 	checkMemberStatus,
 	datesToHuman,
 	formatGMs,
@@ -150,8 +115,8 @@ export {
 	getGameDate,
 	getMonthName,
 	getTimeAlertStatus,
-	getTitleAndGameSystem,
 	getCancelledStatus,
 	addAction,
 	anonData,
+	isMember
 };

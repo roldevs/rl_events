@@ -18,10 +18,21 @@ defined('ABSPATH') or die( "Bye bye" );
 
 class RLEvents_GameDataGameAttendees extends RLEvents_GameDataQueryCache {
   public function data($postId, $canGo) {
-    return $this->filterAttendeesCanGo($postId, $canGo);
+    return array_map(array($this, 'getMemberName'), $this->filterAttendeesCanGo($postId, $canGo));
   }
 
   // Protected
+
+  protected function getMemberName($item) {
+    $memberName = (new RLEvents_GameDataMembers())->memberName($item->name);
+    $isMember = (new RLEvents_GameDataMembers())->isMember($item->name);
+    return array(
+      'member' => $isMember,
+      'name' => $isMember ? $memberName : $item->name,
+      'originalName' => $item->name,
+      'date' => $item->date
+    );
+  }
 
   protected function filterAttendeesCanGo($postId, $canGo) {
     return array_values(array_filter($this->findById($postId, 'ID'), function($item) use($canGo) {
@@ -53,5 +64,11 @@ class RLEvents_GameDataGameAttendees extends RLEvents_GameDataQueryCache {
       pm_status.meta_key = '_tribe_rsvp_status' AND
       pm_eventid.meta_value IN (".join(',', $postIds).")
     ";
+  }
+
+  protected function _findCancelledName($members) {
+    return array_values(array_filter($members, function($member) {
+      return in_array($this->cleanName($member->name), $this->_isCancelledNames());
+    }));
   }
 }

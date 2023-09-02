@@ -5,7 +5,6 @@ import {
 	getStatsTemplate,
 	getShareSectionTemplate,
 } from "./templates.js";
-import {getProgressData, getStats} from "./data.js";
 import {createFilters} from "./filters.js";
 import {initModals} from "./modal.js";
 import {anonData} from "./helpers.js";
@@ -41,16 +40,15 @@ function createNavigation(navData) {
 
 function createProgressBar() {
 	const progressContainer = gameData.querySelector('.js__game-data-progress');
-	const progressData = getProgressData(game_data);
-	const progressBarTemplate = getProgressBarTemplate(progressData);
+	// const progressData = getProgressData(game_data);
+	const progressBarTemplate = getProgressBarTemplate(game_data);
 	progressContainer.insertAdjacentHTML('beforeend', progressBarTemplate);
 }
 
 
 function createStats() {
 	const statsContainer = gameData.querySelector('.js__game-data-stats');
-	const stats = getStats(game_data);
-	statsContainer.innerHTML = getStatsTemplate(stats);
+	statsContainer.innerHTML = getStatsTemplate(game_data);
 }
 
 function createSharer() {

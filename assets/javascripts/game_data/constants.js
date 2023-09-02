@@ -5,7 +5,6 @@ const event = {
 	AVAILABLE_GAME_SLOT: 'Plaza libre',
 	ATTENDEE_LIST: 'Van a jugar'
 }
-const CANCELLED_GAME_STR = 'Cancelado';
 const EMPTY_ATTENDEE = `<li class="event__attendee event__attendee--empty">${event.AVAILABLE_GAME_SLOT}</li>`;
 const gms = {
 	SINGULAR: 'Narrador/a',
@@ -72,6 +71,5 @@ export {
 	warning_msg,
 	filters,
 	stats,
-	CANCELLED_GAME_STR,
 	banner_states,
 }

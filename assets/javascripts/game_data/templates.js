@@ -1,5 +1,4 @@
 import {
-	checkDiscordID,
 	checkMemberStatus,
 	datesToHuman,
 	formatGMs,
@@ -8,8 +7,7 @@ import {
 	getGMsLiteral,
 	getGameDate,
 	getMonthName,
-	getTimeAlertStatus,
-	getTitleAndGameSystem,
+	getTimeAlertStatus
 } from "./helpers.js";
 import {
 	DEFAULT_MAX_PLAYERS,
@@ -24,28 +22,16 @@ import {
 } from "./constants.js";
 import {getEventListToShare} from "./share.js";
 
-
-
-
-
-
 function getAttendeeList({can_go}, max, members) {
 	const maxPlayers = parseInt(max) || DEFAULT_MAX_PLAYERS;
 
 	const emptyPlayers = maxPlayers === -1 ? 0 : maxPlayers - can_go.length;
 	const emptySlots = new Array(emptyPlayers).fill(EMPTY_ATTENDEE);
 	const result = can_go.map(player => {
-		const discordStatus = checkDiscordID(player.name) ? 'event__attendee--bad-discord-id' : '';
-		const discordStatusWarning = discordStatus ? `title="${warning_msg.DISCORD_ID}"` : '';
-		const memberStatus = checkMemberStatus(player.name, members);
-		return `<li class="event__attendee ${memberStatus} ${discordStatus}" data-datetime="${player.date}" ${discordStatusWarning}>
-			${player.name}
-		</li>`;
+		return `<li class="event__attendee ${checkMemberStatus(player)}" data-datetime="${player.date}">${player.name}</li>`;
 	});
 	return [...result, ...emptySlots];
 }
-
-
 
 function getEventsTemplate(games, members) {
 	return games.map(({game, attendees}) => {
@@ -53,9 +39,8 @@ function getEventsTemplate(games, members) {
 		const emptyPlayers = parseInt(game.capacity) - attendees.can_go.length;
 		const fullStatus = emptyPlayers > 0 ? 'event--available' : '';
 		const dateStatus = getDateStatus(game.date);
-		const canceledStatus = getCancelledStatus(attendees) ? 'event--is-cancelled' :  '';
-		const headerContent = getTitleAndGameSystem(game.title);
-		const gameSystem = headerContent.system ? `<p class="event__system">${headerContent.system}</p>` : '';
+		const canceledStatus = getCancelledStatus(game) ? 'event--is-cancelled' :  '';
+		const gameSystem = game.system ? `<p class="event__system">${game.system}</p>` : '';
 		const gameDate = getGameDate(game.date, game.end_date);
 		const timeAlertStatus = getTimeAlertStatus(gameDate.start);
 		const timeAlertStatusWarning = timeAlertStatus ? `title="${warning_msg.TIME}"` : '';
@@ -63,11 +48,11 @@ function getEventsTemplate(games, members) {
 		<article class="event ${dateStatus} ${fullStatus} ${canceledStatus}">
 			<header class="event__header">
 				<a class="event__link" href="${game.link}" target="_blank">
-					<h3 class="event__title">${headerContent.title}</h3>
+					<h3 class="event__title">${game.title}</h3>
 				</a>
 				${gameSystem}
 				<time class="event__date" datetime="${gameDate.dateObj}">
-					<span class="event__date-day">${gameDate.date.day}</span>/<span class="event__date-month">${gameDate.date.month}</span>/<span class="event__date-year">${gameDate.date.year}</span> 
+					<span class="event__date-day">${gameDate.date.day}</span>/<span class="event__date-month">${gameDate.date.month}</span>/<span class="event__date-year">${gameDate.date.year}</span>
 					<span class="event__date-time event__date-time-start ${timeAlertStatus}" ${timeAlertStatusWarning}>${gameDate.start}</span>
 					<span class="event__date-time event__date-time-end">${gameDate.end}</span>
 				</time>
@@ -87,10 +72,6 @@ function getEventsTemplate(games, members) {
 	});
 }
 
-
-
-
-
 function getNavTemplate(data, month) {
 	const options = data.map(option => {
 		const selectedStr = option === month ? 'selected' : '';
@@ -105,10 +86,6 @@ function getNavTemplate(data, month) {
 		</div>
 	</div>`;
 }
-
-
-
-
 
 function getEventsSectionTemplate(data) {
 	const currentMonthName = getMonthName(data.first_day);
@@ -127,51 +104,40 @@ function getEventsSectionTemplate(data) {
 	</div>`;
 }
 
-
-
-
-
-function getProgressBarTemplate(data) {
+function getProgressBarTemplate(game_data) {
 	return `<div class="progress">
 		<div class="progress__container">
 			<div class="progress__total-slots">
-				<span class="progress__total-slots-value">${data.total}</span>
+				<span class="progress__total-slots-value">${game_data.stats.capacity}</span>
 				<span class="progress__total-slots-label"> ${progress.SLOTS}</span>
 			</div>
 			<div class="progress__bar">
-				<div class="progress__bar-club" style="width: ${data.clubPlayers.per}%"></div>
-				<div class="progress__bar-attendees" style="width: ${data.players.per}%"></div>
+				<div class="progress__bar-club" style="width: ${game_data.stats.bookedMembersCount*100/game_data.stats.capacity}%"></div>
+				<div class="progress__bar-attendees" style="width: ${game_data.stats.booked*100/game_data.stats.capacity}%"></div>
 				<div class="progress__bar-track"></div>
 			</div>
 			<ol class="progress__legend">
 				<li class="progress__legend-item progress__legend-item--club">
 					<span class="progress__legend-label">${progress.CLUB}: </span>
-					<span class="progress__legend-value">${data.clubPlayers.total}</span>
+					<span class="progress__legend-value">${game_data.stats.bookedMembersCount}</span>
 					<span class="progress__legend-divider"> ${progress.DIVIDER} </span>
-					<span class="progress__legend-per">${data.clubPlayers.per.toFixed(1)}%</span>
+					<span class="progress__legend-per">${(game_data.stats.bookedMembersCount*100/game_data.stats.capacity).toFixed(1)}%</span>
 				</li>
 				<li class="progress__legend-item">
 					<span class="progress__legend-label">${progress.PLAYERS}: </span>
-					<span class="progress__legend-value">${data.players.total}</span>
+					<span class="progress__legend-value">${game_data.stats.booked}</span>
 					<span class="progress__legend-divider"> ${progress.DIVIDER} </span>
-					<span class="progress__legend-per">${data.players.per.toFixed(1)}%</span>
+					<span class="progress__legend-per">${(game_data.stats.booked*100/game_data.stats.capacity).toFixed(1)}%</span>
 				</li>
 			</ol>
 		</div>
 	</div>`;
 }
 
-
-
-
-
 function getFiltersContainersTemplate() {
 	return `<div class="filters__players js__filter-players"></div>
 	<div class="filters__events js__filter-events"></div>`;
 }
-
-
-
 
 function getGameMasterList() {
 	const gmList = [...document.querySelectorAll('.event__gms-item')]
@@ -235,13 +201,15 @@ function getPlayersTemplate() {
 }
 
 
-function getStatsTemplate(data) {
-	const dataList = [];
-	for (const prop in data) {
-		dataList.push(`<div class="stat">
-			<span class="stat__value">${data[prop]}</span> <span class="stat__label">${stats[prop.toUpperCase()]}</span>
-		</div>`);
-	}
+function getStatsTemplate(game_data) {
+ 	const dataList = [];
+  dataList.push(`<div class="stat"><span class="stat__value">${game_data.stats.games}</span> <span class="stat__label">Partidas</span></div>`);
+  dataList.push(`<div class="stat"><span class="stat__value">${game_data.stats.cancelled}</span> <span class="stat__label">Canceladas</span></div>`);
+  dataList.push(`<div class="stat"><span class="stat__value">${game_data.stats.mastersCount}</span> <span class="stat__label">Narradores</span></div>`);
+  dataList.push(`<div class="stat"><span class="stat__value">${game_data.stats.membersCount+game_data.stats.noMembersCount}</span> <span class="stat__label">Jugadores</span></div>`);
+  dataList.push(`<div class="stat"><span class="stat__value">${game_data.stats.membersCount}</span> <span class="stat__label">@Club</span></div>`);
+  dataList.push(`<div class="stat"><span class="stat__value">${game_data.stats.noMembersCount}</span> <span class="stat__label">Invitados</span></div>`);
+
 	return `${dataList.join('')}`;
 }
 
@@ -272,7 +240,7 @@ function getShareModalTemplate(data) {
 						<h3 class="modal__subtitle">Copiar textos para redes:</h3>
 						<ul class="modal__social wp-exclude-emoji">
 							${getEventListToShare(data)}
-						</ul>					
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -294,14 +262,14 @@ function getSocialBlockTemplate(i, week_first_days, lastOfMonth, data) {
 			<button class="button modal__social-button js__modal-social-button" ${isDisabled}><span class="modal__social-index">${i + 1}</span>: ${title}</button>
 			<pre class="modal__social-text js__modal-social-text">
 			${games.join('\n\n')}
-			</pre>		
+			</pre>
 		</li>`;
 
 	if (i === week_first_days.length - 1) {
 		const allGames = getSocialTemplate(1, weekLastDay, data);
 		result += `<li class="modal__social-block modal__social-block--full js__modal-social-block">
 			<button class="button modal__social-button js__modal-social-button">Mes completo</button>
-			<pre class="modal__social-text js__modal-social-text">${allGames.join('\n\n')}</pre>		
+			<pre class="modal__social-text js__modal-social-text">${allGames.join('\n\n')}</pre>
 		</li>`;
 	}
 
@@ -329,7 +297,7 @@ Esta semana en Resistencia Lúdica: ${g.game.title}
 
 🗓 ${Number(day)} ${textMonth}
 🕙 ${startTime} - ${endTime}
-${isComplete ? '🔥 ¡Partida completa!' : '⭐ ¡Participa!'} 
+${isComplete ? '🔥 ¡Partida completa!' : '⭐ ¡Participa!'}
 ✅ Enlace: ${g.game.link}
 	`;
 		});

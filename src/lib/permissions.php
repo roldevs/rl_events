@@ -3,7 +3,7 @@
 defined('ABSPATH') or die("Bye bye");
 
 function rl_events_can_access_game_data() {
-  return current_user_can ('manage_options');
+  return current_user_can ('read_game_data');
 }
 
 function rl_events_can_access_event_list() {

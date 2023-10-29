@@ -31,6 +31,7 @@ class RLEvents_GameDataGames {
     $masters = $this->statsMasters();
     $members = $this->statsMembers();
     $noMembers = $this->statsNonMembers();
+    $systems = $this->statsSystems();
 
     return array(
       'games' => sizeof($this->getResults()),
@@ -44,7 +45,8 @@ class RLEvents_GameDataGames {
       'uniqMembers' => $members,
       'uniqNonMembers' => $noMembers,
       'masters' => $masters,
-      'cancelled' => $this->statsCancelled()
+      'cancelled' => $this->statsCancelled(),
+      'systems' => $systems
     );
   }
 
@@ -174,6 +176,23 @@ class RLEvents_GameDataGames {
       }
     }
     return $players;
+  }
+
+  private function allSystemData() {
+    $systems = [];
+    foreach($this->getResults() as $record) {
+      array_push($systems, $this->gameGameSystem(htmlspecialchars($record->post_title)));
+    }
+    return $systems;
+  }
+
+  private function countSystem($acc, $system) {
+    $acc[$system] = array_key_exists($system, $acc) ? $acc[$system] + 1 : 1;
+    return $acc;
+  }
+
+  private function statsSystems() {
+    return array_reduce($this->allSystemData(), array($this, 'countSystem'), array());
   }
 
   private function countMember($acc, $attendeeData) {
